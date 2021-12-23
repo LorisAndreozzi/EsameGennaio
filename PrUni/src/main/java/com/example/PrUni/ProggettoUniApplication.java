@@ -10,6 +10,7 @@ public class ProggettoUniApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ProggettoUniApplication.class, args);
+		 
 	}
 
 }
