@@ -15,7 +15,7 @@ public class Autentification {
 		
 		try 
 		{
-			InputStream in = new FileInputStream(nomeFile);
+			InputStream in = new FileInputStream("bearerAutentificationFile.txt");
 			
 			try 
 			{
