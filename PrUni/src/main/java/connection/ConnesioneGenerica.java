@@ -23,7 +23,7 @@ abstract public class ConnesioneGenerica {
 		return url;
 	}
 
-	public void setUrl(URL url) {
+	protected void setUrl(URL url) {
 		this.url = url;
 	}
 
@@ -31,7 +31,7 @@ abstract public class ConnesioneGenerica {
 		return bearer;
 	}
 
-	public void setBearer(String bearer) {
+	protected void setBearer(String bearer) {
 		this.bearer = bearer;
 	}
 }

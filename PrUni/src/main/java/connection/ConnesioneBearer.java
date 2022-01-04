@@ -3,14 +3,13 @@ package connection;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ConnesioneTweet extends ConnesioneGenerica {
+public class ConnesioneBearer extends ConnesioneGenerica{
 
-	public ConnesioneTweet(URL url)
+	public ConnesioneBearer(URL url)
 	{
-		super(url);
-		
+		super(url);	
 	}
-		
+	
 	public HttpURLConnection effettuaConnesione()
 	{
 		String data = "";
@@ -18,7 +17,7 @@ public class ConnesioneTweet extends ConnesioneGenerica {
 		{
 			HttpURLConnection http = (HttpURLConnection)(super.getUrl()).openConnection();
 			http.setRequestProperty("Accept", "application/json");
-			http.setRequestProperty("Authorization", super.getBearer());
+			http.setRequestProperty("Authorization","Bearer " + super.getBearer());
 						
 			System.out.println(http.getResponseCode() + " " + http.getResponseMessage());
 			return http;

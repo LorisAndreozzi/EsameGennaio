@@ -3,14 +3,13 @@ package connection;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ConnesioneSearch extends ConnesioneGenerica{
+public class ConnesioneAutorizzata extends ConnesioneGenerica {
 
-	public ConnesioneSearch(URL url)
+	public ConnesioneAutorizzata(URL url)
 	{
-		super(url);
-		
+		super(url);		
 	}
-	
+		
 	public HttpURLConnection effettuaConnesione()
 	{
 		String data = "";
