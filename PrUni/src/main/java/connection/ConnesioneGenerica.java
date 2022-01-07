@@ -18,7 +18,7 @@ abstract public class ConnesioneGenerica {
 	}
 	
 	abstract public HttpURLConnection effettuaConnesione();
-
+	
 	public URL getUrl() {
 		return url;
 	}

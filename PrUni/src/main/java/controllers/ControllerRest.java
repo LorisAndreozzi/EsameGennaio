@@ -7,12 +7,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.json.simple.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import connection.ConnesioneAutorizzata;
 import connection.ConnesioneBearer;
+import parsing.ParseJsonToJsonObj;
 import urls.PublicMetricsTweetUrl;
 import urls.RechentTweetSearchUrl;
 
@@ -30,13 +32,12 @@ public class ControllerRest {
 	
 	
 	@GetMapping("/tweetMetrics")
-	public String cercaTweet(@RequestParam(name = "id" ,defaultValue = "440322224407314432") String id,
+	public JSONObject cercaTweet(@RequestParam(name = "id" ,defaultValue = "440322224407314432") String id,
 			@RequestParam(name = "tweet.fields" ,defaultValue = "") String tweetFields,
 			@RequestParam(name = "expansions" ,defaultValue = "") String expansions) 
 	{
 		String data = "";
-		try
-		{
+
 			// definisco la connesione
 			// fornisco elementi per la creazione dell'url
 			PublicMetricsTweetUrl urlMetriche1 = new PublicMetricsTweetUrl(); 
@@ -46,33 +47,16 @@ public class ControllerRest {
 			// effettuo una connesione tramite il Bearer Token e l'url generato usando gli elementi precedenti 
 			ConnesioneBearer connessioneMetriche1 = new ConnesioneBearer(urlMetriche1.generaUrl());
 			HttpURLConnection connesioneMetriche1Effettuata = connessioneMetriche1.effettuaConnesione();
-			
-			// apro uno stream dalla connesione
-			InputStream in = connesioneMetriche1Effettuata.getInputStream();			
-			String line = "";
-	
-			// bufferizzo lo stream derivante dalla connesione
-			InputStreamReader inR = new InputStreamReader( in );
-			BufferedReader buf = new BufferedReader( inR );
-				  
-			// leggo lo stream riga per riga
-			while ( ( line = buf.readLine() ) != null ) {
-				 data+= line;
-				 }
-		
-			System.out.println(connesioneMetriche1Effettuata.getResponseCode() + " " + connesioneMetriche1Effettuata.getResponseMessage());
-			connesioneMetriche1Effettuata.disconnect();
-			
-		}catch(Exception errore)
-		{
-			errore.printStackTrace();
-		}
 
-		return data;
+			ParseJsonToJsonObj parsing = new ParseJsonToJsonObj();
+			//parsing.fromHttp(connesioneMetriche1Effettuata);
+			JSONObject a = parsing.fromHttp(connesioneMetriche1Effettuata);
+			
+		return a;
 	}
 	
 	@GetMapping("/tweetsSearch")
-	public String Tweet(@RequestParam(name = "q" ,defaultValue = "calcio") String q,@RequestParam(name = "count" ,defaultValue = "1") String count,@RequestParam(name = "result_type" ,defaultValue = "popular") String result_type,
+	public String Tweet(@RequestParam(name = "q" ,defaultValue = "calcio") String q,@RequestParam(name = "count" ,defaultValue = "5") String count,@RequestParam(name = "result_type" ,defaultValue = "popular") String result_type,
 			@RequestParam(name = "lang" ,defaultValue = "") String lang,@RequestParam(name = "include_entities" ,defaultValue = "false") String include_entities) 
 	{
 		String data = "";
