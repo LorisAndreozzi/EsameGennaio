@@ -8,6 +8,6 @@ public interface Parse {
 
 	public JSONObject fromFile(String nomeFIle);
 	public JSONObject fromHttp(HttpURLConnection connesione);
-	public void saveOnFile();
+	public void saveOnFile(JSONObject jObj);
 	
 }

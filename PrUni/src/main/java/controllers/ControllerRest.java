@@ -15,14 +15,18 @@ import org.springframework.web.bind.annotation.RestController;
 import connection.ConnesioneAutorizzata;
 import connection.ConnesioneBearer;
 import parsing.ParseJsonToJsonObj;
+import services.SearchStatisticsFilters;
 import urls.PublicMetricsTweetUrl;
 import urls.RechentTweetSearchUrl;
 
 @RestController
 public class ControllerRest {
-
-	String url = "https://wd4hfxnxxa.execute-api.us-east-2.amazonaws.com/dev/api/1.1/search/tweets.json?q=calcio&count=2";
 	
+	// variabili d'appoggio
+	JSONObject tweetMetrics;
+	JSONObject tweetSearch;
+	
+	// chiamate
 	@GetMapping("/hello")
 	
 	public String helloWorld(@RequestParam(name = "par" ,defaultValue = "ciao") String par) 
@@ -32,7 +36,7 @@ public class ControllerRest {
 	
 	
 	@GetMapping("/tweetMetrics")
-	public JSONObject cercaTweet(@RequestParam(name = "id" ,defaultValue = "440322224407314432") String id,
+	public JSONObject tweetMetrics(@RequestParam(name = "id" ,defaultValue = "440322224407314432") String id,
 			@RequestParam(name = "tweet.fields" ,defaultValue = "") String tweetFields,
 			@RequestParam(name = "expansions" ,defaultValue = "") String expansions) 
 	{
@@ -44,24 +48,24 @@ public class ControllerRest {
 			urlMetriche1.setIdTweet(id);
 			urlMetriche1.setTweetFields(tweetFields);
 			urlMetriche1.setExpansions(expansions);
+			
 			// effettuo una connesione tramite il Bearer Token e l'url generato usando gli elementi precedenti 
 			ConnesioneBearer connessioneMetriche1 = new ConnesioneBearer(urlMetriche1.generaUrl());
 			HttpURLConnection connesioneMetriche1Effettuata = connessioneMetriche1.effettuaConnesione();
 
+			// effettuo parsing dalla connessione http
 			ParseJsonToJsonObj parsing = new ParseJsonToJsonObj();
-			//parsing.fromHttp(connesioneMetriche1Effettuata);
-			JSONObject a = parsing.fromHttp(connesioneMetriche1Effettuata);
+			JSONObject tweetMetrics = parsing.fromHttp(connesioneMetriche1Effettuata);
 			
-		return a;
+		return tweetMetrics;
 	}
 	
 	@GetMapping("/tweetsSearch")
-	public String Tweet(@RequestParam(name = "q" ,defaultValue = "calcio") String q,@RequestParam(name = "count" ,defaultValue = "5") String count,@RequestParam(name = "result_type" ,defaultValue = "popular") String result_type,
+	public JSONObject tweetsSearch(@RequestParam(name = "q" ,defaultValue = "calcio") String q,@RequestParam(name = "count" ,defaultValue = "5") String count,@RequestParam(name = "result_type" ,defaultValue = "popular") String result_type,
 			@RequestParam(name = "lang" ,defaultValue = "") String lang,@RequestParam(name = "include_entities" ,defaultValue = "false") String include_entities) 
 	{
-		String data = "";
-		try
-		{
+
+			
 			// definisco la connesione
 			// fornisco elementi per la creazione dell'url
 			RechentTweetSearchUrl urlRicerca1 = new RechentTweetSearchUrl(); 
@@ -70,33 +74,26 @@ public class ControllerRest {
 			urlRicerca1.setResult_type(result_type);
 			urlRicerca1.setLang(lang);
 			urlRicerca1.setInclude_entities(include_entities);
+			
 			// effettuo una connesione già autentificata tramite l'url generato usando gli elementi precedenti 
 			ConnesioneAutorizzata connessioneRicerca1 = new ConnesioneAutorizzata(urlRicerca1.generaUrl());
 			HttpURLConnection connesioneRicerca1Effettuata = connessioneRicerca1.effettuaConnesione();
 			
-			// apro uno stream dalla connesione
-			InputStream in = connesioneRicerca1Effettuata.getInputStream();			
-			String line = "";
-	
-			// bufferizzo lo stream derivante dalla connesione
-			InputStreamReader inR = new InputStreamReader( in );
-			BufferedReader buf = new BufferedReader( inR );
-				  
-			// leggo lo stream riga per riga
-			while ( ( line = buf.readLine() ) != null ) {
-				 data+= line;
-				 }
+			// effettuo parsing dalla connessione http
+			ParseJsonToJsonObj parsing = new ParseJsonToJsonObj();
+			tweetSearch = parsing.fromHttp(connesioneRicerca1Effettuata);
 		
-			System.out.println(connesioneRicerca1Effettuata.getResponseCode() + " " + connesioneRicerca1Effettuata.getResponseMessage());
-			connesioneRicerca1Effettuata.disconnect();
-			
-		}catch(Exception errore)
-		{
-			errore.printStackTrace();
-		}
-
-		return data;
+			return tweetSearch;
 
 	}
+	
+	@GetMapping("/prova")
+	public JSONObject prova()
+	{
+		System.out.println(tweetSearch);
+		SearchStatisticsFilters statistiche = new SearchStatisticsFilters(tweetSearch);
+		return statistiche.vectorToJson();
+	}
+	
 	
 }

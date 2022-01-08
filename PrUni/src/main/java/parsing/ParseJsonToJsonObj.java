@@ -1,6 +1,7 @@
 package parsing;
 
 import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -40,9 +41,9 @@ public class ParseJsonToJsonObj implements Parse{
 			 }
 			System.out.println( contenuto + "sono qui");
 			JSONObject jasonObj = (JSONObject) JSONValue.parseWithException(contenuto);	 //parse JSON Object
-			((JSONObject)(jasonObj.get("data"))).get("id");
-
 			System.out.println( "OK" );
+			saveOnFile(jasonObj);
+			
 			return jasonObj;
 			
 		} catch ( IOException| ParseException e) {
@@ -54,9 +55,13 @@ public class ParseJsonToJsonObj implements Parse{
 		return null;
 	}
 	
-	public void saveOnFile()
+	public void saveOnFile(JSONObject jasonObj)
 	{
-		
+        try (FileWriter file = new FileWriter("fileD'appoggio.txt")) {
+            file.write(jasonObj.toJSONString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 	}
 	
 }

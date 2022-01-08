@@ -1,5 +1,7 @@
 package models;
 
+import org.json.simple.JSONObject;
+
 public class Tweet {
 
 	private String tweetId;
@@ -41,5 +43,15 @@ public class Tweet {
 		this.autorId = autorId;
 	} 
 	
-	
+    public JSONObject objToJsonObj() 
+    {
+    	JSONObject obj = new JSONObject();
+    	
+        obj.put("tweetId", this.tweetId );
+        obj.put("tweetText", this.tweetText);
+        obj.put("metriche", this.metriche );
+        obj.put("autorId", this.autorId);
+    	
+    	return obj;
+    }
 }

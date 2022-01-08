@@ -1,51 +1,64 @@
 package models;
 
+import org.json.simple.JSONObject;
+
 public class PublicMetrics {
 
-    private Integer retweet;
-    private Integer reply; 
-    private Integer like;
-    private Integer quote;
+    private Long like;
+    private Long retweet;
+    private Long reply; 
+    private Long quote;
     
-	public PublicMetrics(Integer retweet, Integer reply, Integer like, Integer quote) {
+    // costruttore
+	public PublicMetrics(Long retweet, Long reply, Long like, Long quote) {
 		super();
 		this.retweet = retweet;
 		this.reply = reply;
 		this.like = like;
 		this.quote = quote;
 	}
-
-	public PublicMetrics(Integer retweet, Integer like) {
+	// costruttore secondario,usato dal momento in cui nel search tweet mancano alcune informazioni dei parametri
+	public PublicMetrics(Long retweet, Long like) {
 		super();
 		this.retweet = retweet;
 		this.like = like;
 	}
 
 
-	public Integer getRetweet() {
+	public Long getRetweet() {
 		return retweet;
 	}
-	public void setRetweet(Integer retweet) {
+	public void setRetweet(Long retweet) {
 		this.retweet = retweet;
 	}
-	public Integer getReply() {
+	public Long getReply() {
 		return reply;
 	}
-	public void setReply(Integer reply) {
+	public void setReply(Long reply) {
 		this.reply = reply;
 	}
-	public Integer getLike() {
+	public Long getLike() {
 		return like;
 	}
-	public void setLike(Integer like) {
+	public void setLike(Long like) {
 		this.like = like;
 	}
-	public Integer getQuote() {
+	public Long getQuote() {
 		return quote;
 	}
-	public void setQuote(Integer quote) {
+	public void setQuote(Long quote) {
 		this.quote = quote;
 	}
     
-    
+    public JSONObject objToJsonObj() 
+    {
+    	JSONObject obj = new JSONObject();
+    	
+        obj.put("like", this.like );
+        obj.put("retweet", this.retweet);
+        obj.put("reply", this.reply );
+        obj.put("quote", this.quote);
+    	
+    	return obj;
+    }
 }
