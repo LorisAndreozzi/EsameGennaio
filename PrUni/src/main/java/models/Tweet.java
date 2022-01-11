@@ -49,7 +49,7 @@ public class Tweet {
     	
         obj.put("tweetId", this.tweetId );
         obj.put("tweetText", this.tweetText);
-        obj.put("metriche", this.metriche );
+        obj.put("metriche", this.metriche.objToJsonObj() );
         obj.put("autorId", this.autorId);
     	
     	return obj;
