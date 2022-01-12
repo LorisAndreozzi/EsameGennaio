@@ -8,6 +8,8 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +30,10 @@ public class ControllerRest {
 	// variabili d'appoggio
 	JSONObject tweetMetrics;
 	JSONObject tweetSearch;
+	
+	// costruttore usato esclusivamente per i test per i test
+	public ControllerRest() {};
+	public ControllerRest(String json){ try{JSONObject jasonObj = (JSONObject) JSONValue.parseWithException(json);this.tweetSearch=jasonObj;}catch(ParseException e) {e.printStackTrace();}}
 	
 	// chiamate
 	@GetMapping("/hello")
