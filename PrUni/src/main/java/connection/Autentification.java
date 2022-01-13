@@ -2,20 +2,27 @@ package connection;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.ParseException;
 
 public class Autentification {
 
 	private String bearer = "";
+	private String apiKey = "";
+	private String apiKeySecret = "";
 	
 	public Autentification(String nomeFile) 
 	{
-		String tokenCompleto = "";
+		String jsonAutentification = "";
 		
 		try 
 		{
-			InputStream in = new FileInputStream("bearerAutentificationFile.txt");
+			InputStream in = new FileInputStream("AutentificationFile.json");
 			
 			try 
 			{
@@ -26,22 +33,37 @@ public class Autentification {
 			
 				while ( ( riga = letturaBufferizzata.readLine() ) != null ) 
 				{
-					tokenCompleto += riga;
+					jsonAutentification += riga;
 				}
 				
-			this.bearer = tokenCompleto;
+				JSONObject jasonObjAutentification = (JSONObject) JSONValue.parseWithException(jsonAutentification);
+								
+			this.bearer = ""+jasonObjAutentification.get("BearerToken");
+			this.apiKey = ""+jasonObjAutentification.get("APIKey");
+			this.apiKeySecret = ""+jasonObjAutentification.get("APIKeySecret");
 			
 			}finally
 			{
 				in.close();
 			}
 						
-		}catch(Exception errore) 
+		}catch(IOException | ParseException errore) 
 		{
 			System.out.println(errore);
 			System.out.println("Errore di autentificazione.");
+		}catch(Exception e) 
+		{
+			System.out.println(e);
 		}
 		
+	}
+
+	public String getAPIKey() {
+		return apiKey;
+	}
+
+	public String getAPIKeySecret() {
+		return apiKeySecret;
 	}
 
 	public String getBearer() {

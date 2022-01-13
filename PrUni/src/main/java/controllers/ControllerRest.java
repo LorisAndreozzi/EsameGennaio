@@ -27,23 +27,15 @@ import urls.RechentTweetSearchUrl;
 @RestController
 public class ControllerRest {
 	
-	// variabili d'appoggio
+		// variabili d'appoggio
 	JSONObject tweetMetrics;
 	JSONObject tweetSearch;
 	
-	// costruttore usato esclusivamente per i test per i test
+		// costruttore usato esclusivamente per i test (viene letto un JSON "grezzo" per poi essere elaborato)
 	public ControllerRest() {};
 	public ControllerRest(String json){ try{JSONObject jasonObj = (JSONObject) JSONValue.parseWithException(json);this.tweetSearch=jasonObj;}catch(ParseException e) {e.printStackTrace();}}
 	
-	// chiamate
-	@GetMapping("/hello")
-	
-	public String helloWorld(@RequestParam(name = "par" ,defaultValue = "ciao") String par) 
-	{
-		return "Ciao Mondo " + par;
-	}
-	
-	
+		// CHIAMATE
 	@GetMapping("/tweetMetrics")
 	public JSONObject tweetMetrics(@RequestParam(name = "id" ,defaultValue = "440322224407314432") String id,
 			@RequestParam(name = "tweet.fields" ,defaultValue = "") String tweetFields,
@@ -77,20 +69,20 @@ public class ControllerRest {
 			
 				// definisco la connesione
 				// fornisco elementi per la creazione dell'url
-			//RechentTweetSearchUrl urlRicerca1 = new RechentTweetSearchUrl(); 
-			//urlRicerca1.setQuerie(q);
-			//urlRicerca1.setCount(count);
-			//urlRicerca1.setResult_type(result_type);
-			//urlRicerca1.setLang(lang);
-			//urlRicerca1.setInclude_entities(include_entities);
+			RechentTweetSearchUrl urlRicerca1 = new RechentTweetSearchUrl(); 
+			urlRicerca1.setQuerie(q);
+			urlRicerca1.setCount(count);
+			urlRicerca1.setResult_type(result_type);
+			urlRicerca1.setLang(lang);
+			urlRicerca1.setInclude_entities(include_entities);
 			
 				// effettuo una connesione già autentificata tramite l'url generato usando gli elementi precedenti 
-			//ConnesioneAutorizzata connessioneRicerca1 = new ConnesioneAutorizzata(urlRicerca1.generaUrl());
-			//HttpURLConnection connesioneRicerca1Effettuata = connessioneRicerca1.effettuaConnesione();
+			ConnesioneAutorizzata connessioneRicerca1 = new ConnesioneAutorizzata(urlRicerca1.generaUrl());
+			HttpURLConnection connesioneRicerca1Effettuata = connessioneRicerca1.effettuaConnesione();
 			
 				// effettuo parsing dalla connessione http
 			ParseJsonToJsonObj parsing = new ParseJsonToJsonObj();
-			tweetSearch = parsing.fromHttp(/*connesioneRicerca1Effettuata*/);
+			tweetSearch = parsing.fromHttp(connesioneRicerca1Effettuata);
 		
 			return tweetSearch;
 
@@ -106,7 +98,7 @@ public class ControllerRest {
 	
 	// filtro per parametro voluto moreThan/lessThan
 	@GetMapping("/filtraSearch")
-	public JSONObject moreFiltroSerachPer(@RequestParam(name = "operator" ,defaultValue = "moreThan") String operator,@RequestParam(name = "quantity" ,defaultValue = "100") Long quantity,@RequestParam(name = "nameParam" ,defaultValue = "like") String nameParam)
+	public JSONObject filtroSerachPer(@RequestParam(name = "operator" ,defaultValue = "moreThan") String operator,@RequestParam(name = "quantity" ,defaultValue = "100") Long quantity,@RequestParam(name = "nameParam" ,defaultValue = "like") String nameParam)
 	{
 		try 
 		{
@@ -118,7 +110,7 @@ public class ControllerRest {
 		}catch(JsonNullException|ResponseStatusException exception)	
 		{
 			JSONObject obj = new JSONObject();
-			obj.put("Eccezione",exception);
+			obj.put("Eccezione",exception.getMessage());
 			return obj;
 		}
 			
@@ -126,13 +118,24 @@ public class ControllerRest {
 		return statistiche.filterQuantity( operator, quantity, nameParam);
 	}
 	
-	// cerco maxMin 
+	// cerco maxMin in base all'input che ricevo con la get
 	@GetMapping("/trovaMinMax")
 	public JSONObject trovaMinMaxFromSerach(@RequestParam(name = "min_Max" ,defaultValue = "Max") String minMax,@RequestParam(name = "nameParam" ,defaultValue = "like") String nameParam)
 	{
-		if((!minMax.equals("Max") && !minMax.equals("min"))||(!nameParam.equals("like") && !nameParam.equals("retweet")))
-		{throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Use the only known parameters");}
+		try 
+		{
+			if(tweetSearch == null)
+			{throw new JsonNullException("Prima di effettuare delle operazioni di filtraggio,bisogna lanciare la chiamata tweetsSearch,fornendo al programma le informazioni necessarie sulle quali lavorare");}
+			if((!minMax.equals("Max") && !minMax.equals("min"))||(!nameParam.equals("like") && !nameParam.equals("retweet")))
+			{throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Use the only known parameters");}
 		
+		}catch(JsonNullException|ResponseStatusException exception)	
+		{
+			JSONObject obj = new JSONObject();
+			obj.put("Eccezione",exception.getMessage());
+			return obj;
+		}	
+			
 		SearchStatisticsFilters statistiche = new SearchStatisticsFilters(tweetSearch);
 		return statistiche.findMinMax( minMax, nameParam);
 	}

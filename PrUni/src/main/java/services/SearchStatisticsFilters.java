@@ -77,7 +77,7 @@ public class SearchStatisticsFilters {
 		JSONArray JArrayTemp = (JSONArray) vectorToJson().get("arrayInfo");
 		JSONArray arrayFiltrato = new JSONArray();
 
-		// prende gli elementi che non rispettano le condizioni e li elimina dal JSONarray
+		// prende gli elementi che rispettano il filtro e li mette in un'altro array 
 		for(Object elemento: JArrayTemp )
 		{					
 			numElem++;
@@ -110,8 +110,9 @@ public class SearchStatisticsFilters {
 		JSONObject jObjRitorno = new JSONObject();
 		JSONObject statistics = new JSONObject();
 
+		// Calcolo efficenza filtro
 		System.out.println("array finale");
-		System.out.println("numero elementi : "+numElem +" numero numMag : "+numMag+" numero numMin : "+numMag);
+		System.out.println("numero elementi : "+numElem +" numero numMag : "+numMag+" numero numMin : "+numMin);
 		jObjRitorno.put("arrayInfo", arrayFiltrato);
 		if(numMag != 0 && numElem != numMag )
 		{
@@ -144,12 +145,12 @@ public class SearchStatisticsFilters {
 
 
 	}
-
+	// cerca l'elemento maggiore o minore a seconda della richiesta
 	public JSONObject findMinMax(String minMax,String nameParam)
 	{
 		JSONArray JArrayTemp = (JSONArray) vectorToJson().get("arrayInfo");
 				
-		// cerca l'elemento maggiore o minore a seconda della richiesta
+		// prende l'elemento 1 dell'array e lo compara con gli altri elementi,se rispetta la condizione,il nuovo elemento prende il posto del vecchio
 		JSONObject elemM = (JSONObject) JArrayTemp.get(0);
 		System.out.println("ELEMENTO elemM :  "+elemM);
 		
