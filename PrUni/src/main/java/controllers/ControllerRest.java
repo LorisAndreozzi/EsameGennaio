@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
@@ -96,13 +97,13 @@ public class ControllerRest {
 		return statistiche.vectorToJson();
 	}
 	
-	// filtro per parametro voluto moreThan/lessThan
+	// filtro per parametro voluto (moreThan/lessThan)
 	@GetMapping("/filtraSearch")
 	public JSONObject filtroSerachPer(@RequestParam(name = "operator" ,defaultValue = "moreThan") String operator,@RequestParam(name = "quantity" ,defaultValue = "100") Long quantity,@RequestParam(name = "nameParam" ,defaultValue = "like") String nameParam)
 	{
 		try 
 		{
-			if(tweetSearch == null)
+			if(tweetSearch == null || (JSONArray)(tweetSearch.get("statuses"))==null)
 			{throw new JsonNullException("Prima di effettuare delle operazioni di filtraggio,bisogna lanciare la chiamata tweetsSearch,fornendo al programma le informazioni necessarie sulle quali lavorare");}
 			if((!operator.equals("lessThan") && !operator.equals("moreThan"))||quantity<0||(!nameParam.equals("like") && !nameParam.equals("retweet")))
 			{throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Use the only known parameters");}
@@ -124,7 +125,7 @@ public class ControllerRest {
 	{
 		try 
 		{
-			if(tweetSearch == null)
+			if(tweetSearch == null || (JSONArray)(tweetSearch.get("statuses"))==null)
 			{throw new JsonNullException("Prima di effettuare delle operazioni di filtraggio,bisogna lanciare la chiamata tweetsSearch,fornendo al programma le informazioni necessarie sulle quali lavorare");}
 			if((!minMax.equals("Max") && !minMax.equals("min"))||(!nameParam.equals("like") && !nameParam.equals("retweet")))
 			{throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Use the only known parameters");}
