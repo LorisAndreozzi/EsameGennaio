@@ -6,11 +6,6 @@ Esso viene suddiviso in due parti principali.Nella prima parte,vengono fatte del
 dei dati dalle rispettive API,mentre nella seconda,questi dati vengono elaborati a partire dalle chiamate effettuate al server interno.
 I dati elaborati vengono restituiti sotto forma di un JSONObject.
 
-## Appendix
-
-Any additional information goes here
-
-
 ## Installation
 
 I seguenti comandi vi serviranno per installare(creare) un file .jar grazie al quale sarà possibile avviare il server
@@ -44,13 +39,6 @@ al termine del proccesso che si svolgerà automaticamente grazie alle dipendenze
 ```    
 
 nota 3: per l'utilizzo di alcune chiamate,una volta scaricato il proggetto,è necessario creare un file all'interno della cartella PrUni, chiamandolo :"AutentificationFile.json" ,ed inserire sotto forma di un JSONObject le chiavi (rispettivamente:bearer,apiKey,apiKeySecret). 
-## Acknowledgements
-
- - [Awesome Readme Templates](https://awesomeopensource.com/project/elangosundar/awesome-README-templates)
- - [Awesome README](https://github.com/matiassingers/awesome-readme)
- - [How to write a Good readme](https://bulldogjob.com/news/449-how-to-write-a-good-readme-for-your-github-project)
-
-
 ## API Reference
 
 #### La parte iniziale della chiamata
