@@ -2,6 +2,8 @@ package urls;
 
 import java.net.URL;
 
+// struttura base di una classe astratta Url
+
 public abstract class Url {
 
 	private String urlBase;

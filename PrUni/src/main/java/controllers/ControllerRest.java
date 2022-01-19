@@ -28,23 +28,25 @@ import urls.RechentTweetSearchUrl;
 @RestController
 public class ControllerRest {
 	
-		// variabili d'appoggio
+		// variabili d'appoggio(una volta preso dal server del twitter un JSON "grezzo",esso viene salvato all'interno di queste variabili,per essere utilizzato successivamente)
 	JSONObject tweetMetrics;
 	JSONObject tweetSearch;
 	
 		// costruttore usato esclusivamente per i test (viene letto un JSON "grezzo" per poi essere elaborato)
-	public ControllerRest() {};
-	public ControllerRest(String json){ try{JSONObject jasonObj = (JSONObject) JSONValue.parseWithException(json);this.tweetSearch=jasonObj;}catch(ParseException e) {e.printStackTrace();}}
+	public ControllerRest() {};//questo costruttore viene usato allavio del programma
+	public ControllerRest(String json){ try{JSONObject jasonObj = (JSONObject) JSONValue.parseWithException(json);this.tweetSearch=jasonObj;}catch(ParseException e) {e.printStackTrace();}} // questo per i test
 	
 		// CHIAMATE
+	
+		// una chiamata specifica che utilizza un id(tweet) per richiedre delle metriche publiche di quest'ultimo direttamente dai server del twitter
 	@GetMapping("/tweetMetrics")
 	public JSONObject tweetMetrics(@RequestParam(name = "id" ,defaultValue = "440322224407314432") String id,
-			@RequestParam(name = "tweet.fields" ,defaultValue = "") String tweetFields,
-			@RequestParam(name = "expansions" ,defaultValue = "") String expansions) 
+			@RequestParam(name = "tweet.fields" ,defaultValue = "public_metrics") String tweetFields,
+			@RequestParam(name = "expansions" ,defaultValue = "author_id") String expansions) 
 	{
 		String data = "";
 
-			// definisco la connesione
+			// definisco la connesione:
 			// fornisco elementi per la creazione dell'url
 			PublicMetricsTweetUrl urlMetriche1 = new PublicMetricsTweetUrl(); 
 			urlMetriche1.setIdTweet(id);
@@ -52,7 +54,7 @@ public class ControllerRest {
 			urlMetriche1.setExpansions(expansions);
 			
 			// effettuo una connesione tramite il Bearer Token e l'url generato usando gli elementi precedenti 
-			ConnesioneBearer connessioneMetriche1 = new ConnesioneBearer(urlMetriche1.generaUrl());
+			ConnesioneBearer connessioneMetriche1 = new ConnesioneBearer(urlMetriche1.generaUrl());// utilizzo un metodo del "PublicMetricsTweetUrl" che genera l'url definitivo che poi viene usato nella connessione
 			HttpURLConnection connesioneMetriche1Effettuata = connessioneMetriche1.effettuaConnesione();
 
 			// effettuo parsing dalla connessione http
@@ -61,6 +63,7 @@ public class ControllerRest {
 			
 		return tweetMetrics;
 	}
+	
 	
 	@GetMapping("/tweetsSearch")
 	public JSONObject tweetsSearch(@RequestParam(name = "q" ,defaultValue = "calcio") String q,@RequestParam(name = "count" ,defaultValue = "10") String count,@RequestParam(name = "result_type" ,defaultValue = "popular") String result_type,
@@ -77,7 +80,7 @@ public class ControllerRest {
 			urlRicerca1.setLang(lang);
 			urlRicerca1.setInclude_entities(include_entities);
 			
-				// effettuo una connesione già autentificata tramite l'url generato usando gli elementi precedenti 
+				// effettuo una connesione (già autentificata) tramite l'url generato usando gli elementi precedenti 
 			ConnesioneAutorizzata connessioneRicerca1 = new ConnesioneAutorizzata(urlRicerca1.generaUrl());
 			HttpURLConnection connesioneRicerca1Effettuata = connessioneRicerca1.effettuaConnesione();
 			
@@ -89,10 +92,24 @@ public class ControllerRest {
 
 	}
 	
+	// una chiamata che semplifica il "json" grezzo di partenza ottenuto dalla prima chiamata search,limitando il contenuto del json alle mettriche publiche che ci interessano
+	// a causa dell'incompletezza delle informazioni nel json search si può usufruire ,in questo caso, soltanto dei "like" e dei "retweet"
+	
 	@GetMapping("/prova")
 	public JSONObject prova()
 	{
-		System.out.println(tweetSearch);
+		try 
+		{
+			if(tweetSearch == null || (JSONArray)(tweetSearch.get("statuses"))==null)
+			{throw new JsonNullException("Prima di effettuare delle operazioni di filtraggio,bisogna lanciare la chiamata tweetsSearch,fornendo al programma le informazioni necessarie sulle quali lavorare");}
+		}catch(JsonNullException exception)	
+		{
+			JSONObject obj = new JSONObject();
+			obj.put("Eccezione",exception.getMessage());
+			return obj;
+		}
+			
+		//System.out.println(tweetSearch);
 		SearchStatisticsFilters statistiche = new SearchStatisticsFilters(tweetSearch);
 		return statistiche.vectorToJson();
 	}
@@ -101,7 +118,7 @@ public class ControllerRest {
 	@GetMapping("/filtraSearch")
 	public JSONObject filtroSerachPer(@RequestParam(name = "operator" ,defaultValue = "moreThan") String operator,@RequestParam(name = "quantity" ,defaultValue = "100") Long quantity,@RequestParam(name = "nameParam" ,defaultValue = "like") String nameParam)
 	{
-		try 
+		try // controllo fatto restituisce un JSONObject con il messaggio dell'eccezione riscontrata a causa di un dato inserito non valido oppure a causa di un JSONObject nullo o inadatto al filtraggio
 		{
 			if(tweetSearch == null || (JSONArray)(tweetSearch.get("statuses"))==null)
 			{throw new JsonNullException("Prima di effettuare delle operazioni di filtraggio,bisogna lanciare la chiamata tweetsSearch,fornendo al programma le informazioni necessarie sulle quali lavorare");}
@@ -119,11 +136,11 @@ public class ControllerRest {
 		return statistiche.filterQuantity( operator, quantity, nameParam);
 	}
 	
-	// cerco maxMin in base all'input che ricevo con la get
+	// cerco maxMin in base all'input,nel json ottenuto da tweetsSearch
 	@GetMapping("/trovaMinMax")
 	public JSONObject trovaMinMaxFromSerach(@RequestParam(name = "min_Max" ,defaultValue = "Max") String minMax,@RequestParam(name = "nameParam" ,defaultValue = "like") String nameParam)
 	{
-		try 
+		try // controllo fatto restituisce un JSONObject con il messaggio dell'eccezione riscontrata a causa di un dato inserito non valido oppure a causa di un JSONObject nullo o inadatto al filtraggio
 		{
 			if(tweetSearch == null || (JSONArray)(tweetSearch.get("statuses"))==null)
 			{throw new JsonNullException("Prima di effettuare delle operazioni di filtraggio,bisogna lanciare la chiamata tweetsSearch,fornendo al programma le informazioni necessarie sulle quali lavorare");}

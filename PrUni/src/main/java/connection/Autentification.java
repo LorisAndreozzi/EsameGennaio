@@ -16,13 +16,14 @@ public class Autentification {
 	private String apiKey = "";
 	private String apiKeySecret = "";
 	
+	// Costruttore (avviene attraverso la lettura di un file json contenente informazioni riguardanti le chiavi di accesso)
 	public Autentification(String nomeFile) 
 	{
 		String jsonAutentification = "";
 		
 		try 
 		{
-			InputStream in = new FileInputStream("AutentificationFile.json");
+			InputStream in = new FileInputStream(nomeFile);
 			
 			try 
 			{

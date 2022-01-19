@@ -15,31 +15,37 @@ public class SearchStatisticsFilters {
 
 	private Vector<Tweet> contenutoSearch;
 
+	// COSTRUTTORE
 	public SearchStatisticsFilters(JSONObject jsonSearch)
 	{
+		// si prende in input un JSONObject grezzo,viene istanziato un vettore di tweet
 		contenutoSearch = new Vector<Tweet>();
 		System.out.println("Inizio costruttore Statistiche");
+		// dal json viene estratto l'array contenente i tweet
 		JSONArray contenutoJson = (JSONArray) jsonSearch.get("statuses");
 		System.out.println("Json array estratto");
 
 		for( Object  elemento : contenutoJson )
 		{
-			if ( elemento instanceof JSONObject ) {
+			if ( elemento instanceof JSONObject ) {// per utilizzare un forEach,gli elementi dell'array vengono visti come oggetti generici quindi è necessario usare un instanceof
 				JSONObject elementoJ = (JSONObject)elemento;
 
+				// promemoria personali sul terminale
 				System.out.println("num like :  "+(Long)elementoJ.get("favorite_count"));
 				System.out.println("num retweet :  "+(Long)elementoJ.get("retweet_count"));
 				System.out.println("id :  "+""+elementoJ.get("id"));
 				System.out.println("text :  "+elementoJ.get("text"));
 				System.out.println("id autore :  "+((JSONObject)elementoJ.get("user")).get("id"));
 
-
+				// qundi si crea l'oggetto tweet tramite il costruttore(il tweet contiene al proprio interno un oggetto metriche publiche)
 				PublicMetrics metrichePub = new PublicMetrics((Long)elementoJ.get("favorite_count"),(Long)elementoJ.get("retweet_count"));  		    	
 				Tweet tweet = new Tweet(""+elementoJ.get("id"),""+elementoJ.get("text"),metrichePub,""+((JSONObject)elementoJ.get("user")).get("id"));
 
+				// promemoria personali sul terminale
 				System.out.println(tweet.objToJsonObj());
 				System.out.println("Prima dell'inserimento nel vettore");
 
+				// il tweet viene inserito nel vettore
 				contenutoSearch.add(tweet);
 			}
 
@@ -49,6 +55,7 @@ public class SearchStatisticsFilters {
 
 	}
 
+	// grazie al vettore ottenuto si costruisce un array con delle informazioni che ci interessano, "eliminando tutto il resto"
 	public JSONObject vectorToJson()
 	{
 		if(!contenutoSearch.isEmpty())
@@ -69,15 +76,16 @@ public class SearchStatisticsFilters {
 		return null;
 	}
 
-	// filtro per metrica e quantita 
+	// filtro per metrica e quantità(la quale può essere maggiore o minore di una certa quantità)  
 	public JSONObject filterQuantity(String operator,Long quantity,String nameParam)
 	{
 		int numElem = 0,numMag = 0,numMin = 0;
 
+			// dal vettore che abbiamo a nostra disposizione creaiamo un JSONArray con il quale è piu comodo lavorare()  
 		JSONArray JArrayTemp = (JSONArray) vectorToJson().get("arrayInfo");
 		JSONArray arrayFiltrato = new JSONArray();
 
-		// prende gli elementi che rispettano il filtro e li mette in un'altro array 
+			// prende gli elementi che rispettano il filtro e li mette in un'altro array 
 		for(Object elemento: JArrayTemp )
 		{					
 			numElem++;
@@ -139,13 +147,13 @@ public class SearchStatisticsFilters {
 
 		jObjRitorno.put("statistics", statistics);
 
-		return jObjRitorno;
+		return jObjRitorno; // il JSONObject restituito contiene l'array filtrato + un JSONObject contenente la percentuale dell'efficenza del filtro
 
 		//}
 
 
 	}
-	// cerca l'elemento maggiore o minore a seconda della richiesta
+	// cerca l'elemento maggiore o minore a seconda della richiesta del parametro(like o retweet in questo caso,le altre publiche metriche non sono contenute all'interno di tweetSearch)
 	public JSONObject findMinMax(String minMax,String nameParam)
 	{
 		JSONArray JArrayTemp = (JSONArray) vectorToJson().get("arrayInfo");
@@ -173,7 +181,7 @@ public class SearchStatisticsFilters {
 
 		//
 
-		return elemM;
+		return elemM; // viene restituito JSONObject contenete l'elemento desiderato
 
 
 	}

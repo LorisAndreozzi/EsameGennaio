@@ -15,6 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+
+// Questo test effettua controlli  su un JSON predisposto,situato su un file all'interno di PrUni,il quale serve soltanto per dimostrare l'efficenza del codice
 public class ControllersTest {
 
 	private ControllerRest cRTest1;
@@ -23,7 +25,7 @@ public class ControllersTest {
 	void setUp() throws Exception
 	{
 		String jsonProvvisorio = "";
-		
+		// viene "letto" un file dal quale si prende un json "grezzo"
 		try 
 		{
 			InputStream in = new FileInputStream("JsonForTests.json");
@@ -51,7 +53,7 @@ public class ControllersTest {
 			System.out.println(errore);
 			System.out.println("Errore IO....");
 		}
-		cRTest1 = new ControllerRest(jsonProvvisorio);
+		cRTest1 = new ControllerRest(jsonProvvisorio);// passiamo il json "grezzo" al costruttore della classe controller,contenente i metodi che vogliamo testare
 	}
 	
 	@AfterEach
