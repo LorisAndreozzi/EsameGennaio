@@ -59,15 +59,15 @@ public class ParseJsonToJsonObj implements Parse{
 	}
 
 	// parsing direttamanete dalla connesione
-	public JSONObject fromHttp(HttpURLConnection connesione)
+	public JSONObject fromHttp(HttpURLConnection connessione)
 	{
 		InputStream in;
 		try {
 			
-			if(!connesione.getResponseMessage().equals("OK"))
+			if(!connessione.getResponseMessage().equals("OK"))
 			{throw new ResponseStatusException(HttpStatus.BAD_REQUEST);}
 			
-				in = connesione.getInputStream();// presa in input  direttamente una connesione HTTP apro uno streaming 
+				in = connessione.getInputStream();// presa in input  direttamente una connesione HTTP apro uno streaming 
 
 			String contenuto = "";
 			String riga = "";
@@ -93,8 +93,8 @@ public class ParseJsonToJsonObj implements Parse{
 		} catch(ResponseStatusException e) {
 			JSONObject eccezzione = new JSONObject();
 			try {
-			eccezzione.put("Codice Errore",connesione.getResponseCode());
-			eccezzione.put("Messaggio Errore",connesione.getResponseMessage());
+			eccezzione.put("Codice Errore",connessione.getResponseCode());
+			eccezzione.put("Messaggio Errore",connessione.getResponseMessage());
 			}catch(Exception eInterna)
 			{System.out.println(eInterna);}
 			return eccezzione;

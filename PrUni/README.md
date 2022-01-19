@@ -16,8 +16,20 @@ Any additional information goes here
 I seguenti comandi vi serviranno per installare(creare) un file .jar grazie al quale sarà possibile avviare il server
 senza l'utilizzo di un ambiente di sviluppo,passando direttamente ad un tool per le richieste HTTP (es:Postman).
 
-nota: questo è un proggetto maven,per questo motivo prima di utilizzare i seguenti comandi,assicurarsi di aver installato
+nota: trattandosi di un proggetto maven, prima di utilizzare i seguenti comandi,assicurarsi di aver installato
 Apache Maven sul vostro dispositivo,configurando le variabili d'ambiente.
+
+**Passo 1** 
+
+Utilizzando git,tramite l'Url di riferimento *https://github.com/LorisAndreozzi/EsameGennaio.git* eseguire 
+
+```bash
+ git pull origin master
+```
+
+nota: una volta scaricato il contenuto verificare la presenza delle librerie JUnit 5 e jsonsimple1.1.1.jar,altrimenti l'installazione non sarà possibile
+
+**Passo 2**
 
 Per semplificare alcuni passaggi,una volta scaricato con git il contenuto del proggetto,posizionarsi nella cartella PrUni,quindi usando il comando "cmd" all'interno del
  percorso (path) attivare il prompt dei comandi.Quindi eseguire i seguenti:
@@ -31,7 +43,7 @@ al termine del proccesso che si svolgerà automaticamente grazie alle dipendenze
   java -jar target/PrUni-0.0.1-SNAPSHOT.jar
 ```    
 
-nota: per l'utilizzo di alcune chiamate,una volta scaricato il proggetto,è necessario creare un file all'interno della cartella PrUni, chiamandolo :"AutentificationFile.json" ,ed inserire sotto forma di un JSONObject le chiavi (rispettivamente:bearer,apiKey,apiKeySecret). 
+nota 3: per l'utilizzo di alcune chiamate,una volta scaricato il proggetto,è necessario creare un file all'interno della cartella PrUni, chiamandolo :"AutentificationFile.json" ,ed inserire sotto forma di un JSONObject le chiavi (rispettivamente:bearer,apiKey,apiKeySecret). 
 ## Acknowledgements
 
  - [Awesome Readme Templates](https://awesomeopensource.com/project/elangosundar/awesome-README-templates)
@@ -115,27 +127,16 @@ Questa chiamata trova il tweet contenente il numero massimo o il numero minimo d
 | `nameParam`| `string`| **Required** i parametri disponibili sono i *like* o *retweet*|
 
 
-## Contributing
-
-Contributions are always welcome!
-
-See `contributing.md` for ways to get started.
-
-Please adhere to this project's `code of conduct`.
-
-
 ## Tech Stack
 
-**Client:** React, Redux, TailwindCSS
+**Languages :** Java 11
 
-**Server:** Node, Express
+**Libraries :** JUnit 5, JsonSimple 1.1.1
 
 
-## Running Tests
+## Authors
 
-To run tests, run the following command
+- [@Anton Kruglyakov](https://github.com/nagallak)
+- [@Loris Andreozzi](https://github.com/LorisAndreozzi)
 
-```bash
-  npm run test
-```
 
